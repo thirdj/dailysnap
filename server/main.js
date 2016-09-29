@@ -2,6 +2,7 @@ import express from 'express';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import path from 'path';
+import favicon from 'serve-favicon';
 
 import posts from './routes/posts';
 
@@ -22,6 +23,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/', express.static(path.join(__dirname, '/../public')));
+app.use(favicon(path.join(__dirname, '/../public/favicon.ico')));
 app.use('/posts', posts);
 
 app.get('/hello', (req, res) => {
