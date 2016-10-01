@@ -24,12 +24,7 @@ export default class Login extends Component {
       this.setState({ loggedIn: true });
     })
     .catch(error => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.email;
-      const credential = error.credential;
-
-      // const { code, message, email, credential } = error;
+      const { code, message, email, credential } = error;
 
       console.error(errorCode, errorMessage, email, credential);
     });
