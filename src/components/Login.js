@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import { RaisedButton } from 'material-ui';
-import Firebase from 'firebase';
-
+import { firebaseInit, provider, auth } from '../firebaseInit';
 import Profile from './Profile';
-import firebaseConfig from '../firebase.config.js';
-
-const provider = new Firebase.auth.GoogleAuthProvider();
 
 provider.addScope('https://www.googleapis.com/auth/plus.login');
-Firebase.initializeApp(firebaseConfig);
 
 export default class Login extends Component {
   constructor(props) {
@@ -22,7 +17,7 @@ export default class Login extends Component {
   }
 
   handleLoginClick() {
-    Firebase.auth().signInWithPopup(provider).then(result => {
+    auth.signInWithPopup(provider).then(result => {
       const token = result.credential.accessToken;
       this.user = result.user;
 
