@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
-import { database } from '../firebaseInit';
+import { database, timestamp } from '../firebaseInit';
 import moment from 'moment';
 
 const currentDate = moment().format('YYYYMMDD');
-const creation = moment().format('YYYY-MM-DD HH:mm:ss');
 
 export default class Camera extends Component {
   constructor(props) {
@@ -12,11 +11,16 @@ export default class Camera extends Component {
 
     this.shot = this.shot.bind(this);
 
-    this.state = { screenshot: null }
+    this.state = { screenshot: null };
+  }
+  componentDidMount() {
+    // this.listRender();
   }
   shot() {
     const screenshot = this.refs.webcam.getScreenshot(); // base64
     const currentTime = moment().format('HHmmss');
+    const creation = moment().format('YYYY-MM-DD HH:mm:ss');
+    const timestamp = moment().unix();
     /*
     email
       currentDate
@@ -24,32 +28,30 @@ export default class Camera extends Component {
     */
     database.ref().child(`thirdj/${currentDate}/${currentTime}/image`).set(screenshot);
     database.ref().child(`thirdj/${currentDate}/${currentTime}/creation`).set(creation);
-    // child('images/' + file.name).put(file, metadata);
+    database.ref().child(`thirdj/${currentDate}/${currentTime}/timestamp`).set(timestamp);
+
     this.setState({ screenshot });
   }
-  render() {
-
-    database.ref().child('thirdj').on('value', function (snapshot) {
+  listRender() {
+    let snap = [];
+    database.ref()
+      .child(`thirdj/${currentDate}`)
+      .orderByChild('timestamp')
+      .on('value', function (snapshot) {
 
       var snapVal = snapshot.val();
-      //console.log("snapshot.val()", snapVal);
-      var count = 0;
-      var chartArray = [];
-      chartArray.push(['Time', 'thirdj']);
       for (var key in snapVal) {
-          //key는 유저 id
-          if (snapVal.hasOwnProperty(key)) {
-              console.log("key/value", key, snapVal[key]);
-              for (var obj in snapVal[key]) {
-                  var thirdj = snapVal[key][obj];
-                  chartArray.push([count++, thirdj]);
-              }
-          }
+        snap.unshift(<img height={100} width={100} src={snapVal[key].image} alt={snapVal[key].creation} />);
       }
-
-      console.log('chartArray ', chartArray);
     });
 
+    if (!snap.length) {
+      return <div>Wating...</div>;
+    }
+
+    return <ul>{ snap.map((data, idx) => <li key={idx} style={{ display: 'inline-block', padding: '0 20px' }}>{data}</li>) }</ul>;
+  }
+  render() {
     return (
       <div>
         <Webcam
@@ -59,6 +61,7 @@ export default class Camera extends Component {
         />
         <button onClick={this.shot}>screenshot</button>
         { this.state.screenshot ? <img src={this.state.screenshot} /> : null }
+        { this.listRender() }
       </div>
     );
   }
