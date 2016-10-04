@@ -21,14 +21,13 @@ export default class Camera extends Component {
     const currentTime = moment().format('HHmmss');
     const creation = moment().format('YYYY-MM-DD HH:mm:ss');
     const timestamp = moment().unix();
-    /*
-    email
-      currentDate
-        shot time
-    */
-    database.ref().child(`thirdj/${currentDate}/${currentTime}/image`).set(screenshot);
-    database.ref().child(`thirdj/${currentDate}/${currentTime}/creation`).set(creation);
-    database.ref().child(`thirdj/${currentDate}/${currentTime}/timestamp`).set(timestamp);
+    const refTime = database.ref().child(`thirdj/${currentDate}/${currentTime}`);
+
+    refTime.set({
+      screenshot,
+      creation,
+      timestamp
+    });
 
     this.setState({ screenshot });
   }
@@ -36,12 +35,11 @@ export default class Camera extends Component {
     let snap = [];
     database.ref()
       .child(`thirdj/${currentDate}`)
-      .orderByChild('timestamp')
       .on('value', function (snapshot) {
 
       var snapVal = snapshot.val();
       for (var key in snapVal) {
-        snap.unshift(<img height={100} width={100} src={snapVal[key].image} alt={snapVal[key].creation} />);
+        snap.unshift(<img height={100} width={100} src={snapVal[key].screenshot} alt={snapVal[key].creation} />);
       }
     });
 
