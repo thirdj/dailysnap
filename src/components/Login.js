@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { RaisedButton } from 'material-ui';
+import { Button, Icon } from 'semantic-ui-react';
 import { firebaseInit, provider, auth } from '../firebaseInit';
 import Profile from './Profile';
 
@@ -10,7 +11,7 @@ export default class Login extends Component {
     super(props);
 
     this.handleLoginClick = this.handleLoginClick.bind(this);
-    this.handleViewUser = this.handleViewUser.bind(this);
+    this.handleState = this.handleState.bind(this);
     this.user = null;
 
     this.state = { loggedIn: false };
@@ -20,14 +21,16 @@ export default class Login extends Component {
     const user = auth.currentUser;
 
     if (user !== null) {
-      this.setState({ loggedIn: true });
+      this.handleState(true);
+      // this.setState({ loggedIn: true });
       this.user = user;
     } else {
       auth.signInWithPopup(provider).then(result => {
         const token = result.credential.accessToken;
         this.user = result.user;
 
-        this.setState({ loggedIn: true });
+        this.handleState(true);
+        // this.setState({ loggedIn: true });
       })
       .catch(error => {
         const { code, message, email, credential } = error;
@@ -37,8 +40,25 @@ export default class Login extends Component {
     }
   }
 
+  handleLogout() {
+    auth.signOut().then(() => {
+      console.info('Logout successful');
+      // Sign-out successful.
+      // window.location.reload();
+    }, error => {
+      // An error happened.
+      console.error('Logout fail');
+    });
+    this.handleState(false);
+  }
+
+  handleState(loggedIn) {
+    console.log('loggedIn  ', loggedIn);
+    this.setState({ loggedIn });
+  }
+
   handleViewUser(user) {
-    return this.state.loggedIn ? <Profile user={user} /> : '';
+    return this.state.loggedIn ? <Profile user={user} onLogout={this.handleLogout}/> : '';
   }
 
   render() {
@@ -46,8 +66,9 @@ export default class Login extends Component {
 
     const view = this.state.loggedIn
       ? this.handleViewUser(this.user)
-      : <RaisedButton label="Enter" className="button" onClick={this.handleLoginClick}/>;
-
+      : <Button color='google plus' className="button" onClick={this.handleLoginClick}>
+          <Icon name='google plus' />Enter
+        </Button>;
     return (
       <div className="container">
         {view}
