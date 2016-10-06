@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
-import { database, timestamp } from '../firebaseInit';
 import moment from 'moment';
+
+import { database, timestamp } from '../firebaseInit';
 
 const currentDate = moment().format('YYYYMMDD');
 

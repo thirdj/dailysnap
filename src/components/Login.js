@@ -17,17 +17,24 @@ export default class Login extends Component {
   }
 
   handleLoginClick() {
-    auth.signInWithPopup(provider).then(result => {
-      const token = result.credential.accessToken;
-      this.user = result.user;
+    const user = auth.currentUser;
 
+    if (user !== null) {
       this.setState({ loggedIn: true });
-    })
-    .catch(error => {
-      const { code, message, email, credential } = error;
+      this.user = user;
+    } else {
+      auth.signInWithPopup(provider).then(result => {
+        const token = result.credential.accessToken;
+        this.user = result.user;
 
-      console.error(errorCode, errorMessage, email, credential);
-    });
+        this.setState({ loggedIn: true });
+      })
+      .catch(error => {
+        const { code, message, email, credential } = error;
+
+        console.error(errorCode, errorMessage, email, credential);
+      });
+    }
   }
 
   handleViewUser(user) {
@@ -39,7 +46,7 @@ export default class Login extends Component {
 
     const view = this.state.loggedIn
       ? this.handleViewUser(this.user)
-      : <RaisedButton label="Login" className="button" onClick={this.handleLoginClick}/>;
+      : <RaisedButton label="Enter" className="button" onClick={this.handleLoginClick}/>;
 
     return (
       <div className="container">

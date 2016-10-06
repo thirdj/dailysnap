@@ -11,7 +11,7 @@ injectTapEventPlugin();
 
 const Root = () => (
   <MuiThemeProvider>
-    <Camera />
+    <Login />
   </MuiThemeProvider>
 );
 
