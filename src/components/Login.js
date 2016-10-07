@@ -44,12 +44,12 @@ export default class Login extends Component {
     auth.signOut().then(() => {
       console.info('Logout successful');
       // Sign-out successful.
-      // window.location.reload();
+      window.location.reload();
     }, error => {
       // An error happened.
       console.error('Logout fail');
     });
-    this.handleState(false);
+    // this.handleState(false);
   }
 
   handleState(loggedIn) {
