@@ -22,8 +22,60 @@ export default class Camera extends Component {
     this.state = { screenshot: null };
   }
 
+  componentDidMount() {
+    // this.interval();
+  }
+
+  interval() {
+    setInterval(() => {
+      sleep(3000).then(() => {
+        this.getNotificationGranted();
+      }).then(() => {
+        this.shot();
+      });
+    }, 3000);
+  }
+
+  // TODO: db 에서 시간을 받아와서 동작 해야 함.
+  // TODO: 클릭 했을때 현재 탭으로 돌아가야 함.
+  getNotificationGranted() {
+    if (!('Notification' in window)) {
+      alert('This browser does not support desktop notification');
+    } else if (Notification.permission === 'granted') {
+      this.notification();
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission(function(permission) {
+        if (!('permission' in Notification)) {
+          Notification.permission = permission;
+        }
+        if (permission === 'granted') {
+          this.notification();
+        }
+      });
+    }
+  }
+
+  notification() {
+    const options = {
+      body: '사진 찍을거야!! 돌아와!!!',
+      icon: '//simpl.info/notification/icon.png',
+      tag: 'foo',
+      type: 'basic'
+    };
+    const n = new Notification('Greetings from dailysnap!', options);
+    n.onclick = function() {
+      console.log('Clicked.');
+    };
+    n.onclose = function() {
+      console.log('Closed.');
+    };
+    n.onshow = function() {
+      console.log('Shown.');
+    };
+  }
+
   shot() {
-    const screenshot = this.refs.webcam.getScreenshot(); // base64
+    const screenshot = this.webcam.getScreenshot(); // base64
     const currentTime = moment().format('HHmmss');
     const creation = moment().format('YYYY-MM-DD HH:mm:ss');
     const timestamp = moment().unix();
@@ -49,10 +101,10 @@ export default class Camera extends Component {
   listRender() {
     let snap = [];
 
-    database.ref().child(`thirdj/${currentDate}`).on('value', function (snapshot) {
-      var snapVal = snapshot.val();
+    database.ref().child(`thirdj/${currentDate}`).on('value', snapshot => {
+      const snapVal = snapshot.val();
 
-      for (var key in snapVal) {
+      for (const key in snapVal) {
         if (snapVal[key].screenshot === undefined) return false;
         snap.unshift(<img height={100} width={100} className={snapVal[key].cssgram} src={snapVal[key].screenshot} alt={snapVal[key].creation} />);
       }
@@ -67,15 +119,16 @@ export default class Camera extends Component {
   render() {
     return (
       <div>
-        <Webcam
-          ref='webcam'
-          width='350'
-          height='400'
-        />
+        <Webcam ref={ref => { this.webcam = ref; }} width='350' height='400' />
         <button onClick={this.shot}>screenshot</button>
         { this.state.screenshot ? <img src={this.state.screenshot} className={setCss} /> : null }
         { this.listRender() }
       </div>
     );
   }
+}
+
+// https://zeit.co/blog/async-and-await
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
