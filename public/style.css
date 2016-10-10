@@ -51,3 +51,8 @@ html, body {
 #root .card {
   width: 20%;
 }
+
+#root ul li.lists {
+  display: inline-block;
+  padding: 0 20px;
+}

@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
+// https://github.com/cezary/react-webcam
+
 import moment from 'moment';
+// import 'babel-polyfill';
 
 import { database, timestamp } from '../firebaseInit';
+import Cssgram from './Cssgram';
 
 const currentDate = moment().format('YYYYMMDD');
 const refsettings = database.ref().child(`thirdj/${currentDate}/settings`);
-const classes = [
-  '_1997', 'moon', 'aden', 'nashville', 'brooklyn', 'clarendon', 'earlybird',
-  'hudson', 'inkwell', 'lark', 'lofi', 'mayfair', 'perpetua', 'reyes',
-  'rise', 'slumber', 'toaster', 'walden', 'willow', 'xpro2', 'gingham'
-];
+
 let setCss;
 
 export default class Camera extends Component {
@@ -18,6 +18,7 @@ export default class Camera extends Component {
     super(props);
 
     this.shot = this.shot.bind(this);
+    // this.interval = this.interval.bind(this);
 
     this.state = { screenshot: null };
   }
@@ -25,17 +26,17 @@ export default class Camera extends Component {
   componentDidMount() {
     // this.interval();
   }
-
-  interval() {
-    setInterval(() => {
-      sleep(3000).then(() => {
-        this.getNotificationGranted();
-      }).then(() => {
-        this.shot();
-      });
-    }, 3000);
+/*
+  async interval() {
+    // TODO: async await 사용해서 noti 이후 사진을 찍자.
+    // setInterval(() => {
+    await this.getNotificationGranted();
+    await sleep(5000);
+    await this.shot();
+    await sleep(5000);
+    // }, 5000);
   }
-
+*/
   // TODO: db 에서 시간을 받아와서 동작 해야 함.
   // TODO: 클릭 했을때 현재 탭으로 돌아가야 함.
   getNotificationGranted() {
@@ -57,7 +58,7 @@ export default class Camera extends Component {
 
   notification() {
     const options = {
-      body: '사진 찍을거야!! 돌아와!!!',
+      body: '5초 후에 사진 찍을거야!! 돌아와!!!',
       icon: '//simpl.info/notification/icon.png',
       tag: 'foo',
       type: 'basic'
@@ -80,9 +81,9 @@ export default class Camera extends Component {
     const creation = moment().format('YYYY-MM-DD HH:mm:ss');
     const timestamp = moment().unix();
     const refTime = database.ref().child(`thirdj/${currentDate}/${currentTime}`);
-    const randomCss = Math.floor(Math.random() * classes.length);
+    const randomCss = Math.floor(Math.random() * Cssgram.length);
 
-    setCss = classes[randomCss];
+    setCss = Cssgram[randomCss];
 
     refsettings.set({
       keyword: '안녕, 대리님, 주임님, 과장님'
@@ -92,13 +93,14 @@ export default class Camera extends Component {
       screenshot,
       creation,
       timestamp,
-      cssgram: classes[randomCss]
+      cssgram: Cssgram[randomCss]
     });
 
     this.setState({ screenshot });
   }
 
   listRender() {
+    console.log('listRender ');
     let snap = [];
 
     database.ref().child(`thirdj/${currentDate}`).on('value', snapshot => {
@@ -106,20 +108,29 @@ export default class Camera extends Component {
 
       for (const key in snapVal) {
         if (snapVal[key].screenshot === undefined) return false;
-        snap.unshift(<img height={100} width={100} className={snapVal[key].cssgram} src={snapVal[key].screenshot} alt={snapVal[key].creation} />);
+        snap.unshift(
+          <img
+            height={100} width={100} className={snapVal[key].cssgram}
+            src={snapVal[key].screenshot} alt={snapVal[key].creation}
+          />
+        );
       }
     });
     if (!snap.length) {
       return <div>Wating...</div>;
     }
 
-    return <ul>{ snap.map((data, idx) => <li key={idx} style={{ display: 'inline-block', padding: '0 20px' }}>{data}</li>) }</ul>;
+    return <ul>{ snap.map((data, idx) => <li key={idx} className="lists">{data}</li>) }</ul>;
   }
 
   render() {
+    console.log('Camera render ', {state: this.state, props: this.props});
     return (
       <div>
-        <Webcam ref={ref => { this.webcam = ref; }} width='350' height='400' />
+        <Webcam
+          ref={ref => { this.webcam = ref; }}
+          width='350' height='400'
+        />
         <button onClick={this.shot}>screenshot</button>
         { this.state.screenshot ? <img src={this.state.screenshot} className={setCss} /> : null }
         { this.listRender() }
