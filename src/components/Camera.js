@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import Webcam from 'react-webcam';
 // https://github.com/cezary/react-webcam
 
-import moment from 'moment';
 // import 'babel-polyfill';
+import { database } from '../firebaseInit';
+import moment from 'moment';
 
-import { database, timestamp } from '../firebaseInit';
-import Cssgram from './Cssgram';
+import Cssgram from '../libs/Cssgram';
 
 const currentDate = moment().format('YYYYMMDD');
-const refsettings = database.ref().child(`thirdj/${currentDate}/settings`);
-
+const refSettings = database.ref().child(`thirdj/${currentDate}/settings`);
 let setCss;
 
 export default class Camera extends Component {
@@ -18,7 +17,6 @@ export default class Camera extends Component {
     super(props);
 
     this.shot = this.shot.bind(this);
-    // this.interval = this.interval.bind(this);
 
     this.state = { screenshot: null };
   }
@@ -85,7 +83,7 @@ export default class Camera extends Component {
 
     setCss = Cssgram[randomCss];
 
-    refsettings.set({
+    refSettings.set({
       keyword: '안녕, 대리님, 주임님, 과장님'
     });
 
