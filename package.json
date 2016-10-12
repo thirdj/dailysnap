@@ -19,6 +19,7 @@
     "moment": "^2.15.1",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
+    "react-router": "^4.0.0-alpha.4",
     "semantic-ui-react": "^0.54.2",
     "serve-favicon": "^2.3.0"
   },
