@@ -1,7 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-// import injectTapEventPlugin from 'react-tap-event-plugin';
 import { BrowserRouter as Router, Link, Match, Miss } from 'react-router';
 
 import Login from './Login';

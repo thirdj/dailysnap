@@ -1,4 +1,9 @@
+const path = require('path');
 const webpack = require('webpack');
+const PATHS = {
+  src: path.join(__dirname, 'src'),    // 소스 파일은 src 폴더에
+  build: path.join(__dirname, 'public') // 변환 후 파일은 build 폴더에
+};
 
 module.exports = {
 
