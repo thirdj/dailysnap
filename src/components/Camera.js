@@ -39,7 +39,7 @@ export default class Camera extends Component {
   // TODO: 클릭 했을때 현재 탭으로 돌아가야 함.
   getNotificationGranted() {
     if (!('Notification' in window)) {
-      alert('This browser does not support desktop notification');
+      console.info('This browser does not support desktop notification');
     } else if (Notification.permission === 'granted') {
       this.notification();
     } else if (Notification.permission !== 'denied') {
@@ -99,7 +99,7 @@ export default class Camera extends Component {
 
   listRender() {
     console.log('listRender ');
-    let snap = [];
+    const snap = [];
 
     database.ref().child(`thirdj/${currentDate}`).on('value', snapshot => {
       const snapVal = snapshot.val();
@@ -118,7 +118,15 @@ export default class Camera extends Component {
       return <div>Wating...</div>;
     }
 
-    return <ul>{ snap.map((data, idx) => <li key={idx} className="lists">{data}</li>) }</ul>;
+    return (
+      <ul>
+        {
+          snap.map((data, idx) => {
+            return <li key={idx} className="lists">{data}</li>;
+          })
+        }
+      </ul>
+    );
   }
 
   render() {
@@ -127,10 +135,14 @@ export default class Camera extends Component {
       <div>
         <Webcam
           ref={ref => { this.webcam = ref; }}
-          width='350' height='400'
+          width="350" height="400"
         />
         <button onClick={this.shot}>screenshot</button>
-        { this.state.screenshot ? <img src={this.state.screenshot} className={setCss} /> : null }
+        {
+          this.state.screenshot ?
+            <img src={this.state.screenshot} className={setCss} aria-hidden alt="capture Images" />
+            : null
+        }
         { this.listRender() }
       </div>
     );
@@ -138,6 +150,6 @@ export default class Camera extends Component {
 }
 
 // https://zeit.co/blog/async-and-await
-function sleep (time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+// function sleep(time) {
+//   return new Promise((resolve) => setTimeout(resolve, time));
+// }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { RaisedButton } from 'material-ui';
 import { Button, Icon } from 'semantic-ui-react';
-import { firebaseInit, provider, auth } from '../firebaseInit';
+import { provider, auth } from '../firebaseInit';
 import Profile from './Profile';
 
 provider.addScope('https://www.googleapis.com/auth/plus.login');
@@ -22,11 +21,10 @@ export default class Login extends Component {
 
     if (user !== null) {
       this.handleState(true);
-      // this.setState({ loggedIn: true });
       this.user = user;
     } else {
       auth.signInWithPopup(provider).then(result => {
-        const token = result.credential.accessToken;
+        // const token = result.credential.accessToken;
         this.user = result.user;
 
         this.handleState(true);
@@ -35,7 +33,7 @@ export default class Login extends Component {
       .catch(error => {
         const { code, message, email, credential } = error;
 
-        console.error(errorCode, errorMessage, email, credential);
+        console.error(code, message, email, credential);
       });
     }
   }
@@ -47,7 +45,7 @@ export default class Login extends Component {
       window.location.reload();
     }, error => {
       // An error happened.
-      console.error('Logout fail');
+      console.error('Logout fail', error);
     });
     // this.handleState(false);
   }
@@ -58,16 +56,16 @@ export default class Login extends Component {
   }
 
   handleViewUser(user) {
-    return this.state.loggedIn ? <Profile user={user} onLogout={this.handleLogout}/> : '';
+    return this.state.loggedIn ? <Profile user={user} onLogout={this.handleLogout} /> : '';
   }
 
   render() {
     console.log('Login render ', {state: this.state, props: this.props});
 
     const view = this.state.loggedIn
-      ? this.handleViewUser(this.user)
-      : <Button color='google plus' className="button" onClick={this.handleLoginClick}>
-          <Icon name='google plus' />Enter
+      ? this.handleViewUser(this.user) :
+        <Button color="google plus" className="button" onClick={this.handleLoginClick}>
+          <Icon name="google plus" />Enter
         </Button>;
     return (
       <div className="container">

@@ -1,5 +1,4 @@
 import React from 'react';
-import { render } from 'react-dom';
 import { BrowserRouter as Router, Link, Match, Miss } from 'react-router';
 
 import Login from './Login';
@@ -13,9 +12,9 @@ const App = ({ history }) => {
     <Router history={history}>
       <div style={{height: 'inherit'}}>
         <ul>
-          <li><Link to="/">Login</Link></li>
-          <li><Link to="/camera">Camera</Link></li>
-          <li><Link to="/speech">Speech</Link></li>
+          <li><Link to="/"><span>Login</span></Link></li>
+          <li><Link to="/camera"><span>Camera</span></Link></li>
+          <li><Link to="/speech"><span>Speech</span></Link></li>
         </ul>
         <hr />
         <Match exactly pattern="/" component={Login} />
