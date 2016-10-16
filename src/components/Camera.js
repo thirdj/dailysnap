@@ -101,9 +101,9 @@ export default class Camera extends Component {
     console.log('listRender ');
     const snap = [];
 
-    database.ref().child(`thirdj/${currentDate}`).on('value', snapshot => {
+    database.ref().child(`thirdj/${currentDate}`).on('child_added', snapshot => {
       const snapVal = snapshot.val();
-
+      console.log('snapVal  ', snapVal);
       for (const key in snapVal) {
         if (snapVal[key].screenshot === undefined) return false;
         snap.unshift(
