@@ -116,10 +116,32 @@ body {
 }
 
 #root main section {
-  flex-basis: 80%;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 60%;
   height: 80%;
   background-color: #fff;
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+#root main section .row {
+  flex-grow: 1;
+  border-bottom: 1px solid #ccc;
+
+  padding: 10px 10px;
+  margin: 10px 0;
+
+  -webkit-box-shadow: 0px 1px 1px rgba(100, 100, 100, 0.7);
+     -moz-box-shadow: 0px 1px 1px rgba(100, 100, 100, 0.7);
+          box-shadow: 0px 1px 1px rgba(100, 100, 100, 0.7);
+}
+
+#root main section .row:last-child {
+  border-bottom: none;
+
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
 }
 
 
