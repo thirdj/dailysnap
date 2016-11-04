@@ -22,7 +22,9 @@ export default class Camera extends Component {
   }
 
   componentDidMount() {
-    // this.interval();
+    refSettings.set({
+      keyword: '안녕, 대리님, 주임님, 과장님'
+    });
   }
 /*
   async interval() {
@@ -82,10 +84,6 @@ export default class Camera extends Component {
     const randomCss = Math.floor(Math.random() * Cssgram.length);
 
     setCss = Cssgram[randomCss];
-
-    refSettings.set({
-      keyword: '안녕, 대리님, 주임님, 과장님'
-    });
 
     refTime.set({
       screenshot,

@@ -1,5 +1,5 @@
 
-import { database } from '../firebaseInit';
+import { database } from '../../firebaseInit';
 import moment from 'moment';
 
 export const currentDate = moment().format('YYYYMMDD');

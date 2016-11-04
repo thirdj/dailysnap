@@ -1,44 +1,53 @@
 const path = require('path');
 const webpack = require('webpack');
+
+const nodeModulesDir = path.resolve(__dirname, 'node_modules');
+
 const PATHS = {
-  src: path.join(__dirname, 'src'),    // 소스 파일은 src 폴더에
-  build: path.join(__dirname, 'public') // 변환 후 파일은 build 폴더에
+  entry: path.join(__dirname, 'src'),    // 소스 파일은 src 폴더에
+  build: path.join(__dirname, 'public'), // 변환 후 파일은 build 폴더에
+  dist: path.join(__dirname, 'dist')
 };
 
 module.exports = {
 
   entry: [
-    './src/index.js',
-    'webpack-dev-server/client?http://0.0.0.0:3001',
-    'webpack/hot/only-dev-server'
+    'webpack-dev-server/client?http://0.0.0.0:8001',
+    'webpack/hot/only-dev-server',
+    PATHS.entry
   ],
 
   output: {
-    path: '/',
+    path: PATHS.dist,
     filename: 'bundle.js'
   },
 
-  devtool: 'source-map',
+  devtool: '#eval-source-map',
 
   devServer: {
+    inline: true,
+    progress: true,
     hot: true,
     colors: true,
-    filename: 'bundle.js',
-    publicPath: '/',
+    // filename: 'bundle.js',
+    // publicPath: '../',
     historyApiFallback: true,
     contentBase: './public',
-    proxy: {
-      "*": "http://localhost:3000"
-    }
+    host: '0.0.0.0',
+    port: 8001
+    // proxy: {
+    //   "*": "http://localhost:3000"
+    // }
   },
 
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
-
   module: {
+    preLoaders: [
+      {
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: [nodeModulesDir]
+      }
+    ],
     loaders: [
       {
         test: /\.js$/,
@@ -49,8 +58,19 @@ module.exports = {
             presets: ['es2015', 'react']
           })
         ],
-        exclude: /node_modules/
+        exclude: [nodeModulesDir]
       }
     ]
-  }
+  },
+
+  resolve: {
+    root: path.resolve(__dirname),
+    extensions: ['', '.js', '.jsx', '.css']
+  },
+
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ]
 };

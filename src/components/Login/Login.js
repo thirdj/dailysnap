@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Icon } from 'semantic-ui-react';
-import { provider, auth } from '../firebaseInit';
-import Profile from './Profile';
+import { provider, auth } from '../../firebaseInit';
+import Profile from '../Profile';
 
 provider.addScope('https://www.googleapis.com/auth/plus.login');
 
